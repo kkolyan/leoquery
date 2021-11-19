@@ -1,0 +1,6 @@
+{
+  "name": "Kk.LeoQuery",
+  "references": [
+    "Leopotam.EcsLite"
+  ]
+}
