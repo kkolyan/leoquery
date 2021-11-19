@@ -65,6 +65,11 @@ namespace Kk.LeoQuery
             this.ops = ops;
             this.id = id;
         }
+
+        public static implicit operator Entity(Entity<T1> entity)
+        {
+            return new Entity(entity.ops, entity.id);
+        }
         
         // specialized methods
         
@@ -126,6 +131,11 @@ namespace Kk.LeoQuery
         {
             this.ops = ops;
             this.id = id;
+        }
+
+        public static implicit operator Entity(Entity<T1, T2> entity)
+        {
+            return new Entity(entity.ops, entity.id);
         }
         
         // specialized methods
