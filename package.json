@@ -1,7 +1,7 @@
 {
     "name": "com.nplekhanov.csx.leoquery",
     "author": "kkolyan",
-    "displayName": "leotrace",
+    "displayName": "leoquery",
     "description": "Sugar facade for LeoECS Lite",
     "unity": "2019.1",
     "version": "2020.11.22",
