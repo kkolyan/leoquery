@@ -42,7 +42,7 @@ Note that this short guide may miss information regarding corner cases. Please r
 
 
 ## Systems
-Systems area C# class that implements `ISystem` and contain little bit of game logic. Supposed that whole game behavior is composed from a dozens of such classes
+Systems are C# classуы that implement `ISystem` and contain little bit of game logic. Supposed that whole game logic is composed from a dozens of such classes
 ```c#
 public class System1 : ISystem
 {
@@ -54,7 +54,7 @@ public class System1 : ISystem
 ```
 
 ## External services
-If you want to call some logic that for some reason lives outside ECS systems, then yoy might use [DI](https://en.wikipedia.org/wiki/Dependency_injection) to access external objects
+If one want to call some logic that for some reason lives outside ECS systems, then [DI](https://en.wikipedia.org/wiki/Dependency_injection) might be used to access external objects
 ```c#
 public class System1 : ISystem
 {
@@ -67,7 +67,7 @@ public class System1 : ISystem
 }
 ```
 
-## Entry point
+## Systems and dependency registration, engine integration
 ```c#
     
     ISystem _mainPipeline;
@@ -75,20 +75,23 @@ public class System1 : ISystem
     
     void Start()
     {
-        // storage is container for entities and components
+        // storage is container for entities and components (like EcsWorld in LeoECS Classic)
         _storage = new LeoLiteStorage();
         
-        // reflection+attributes based DI agent. that's completely optional.
+        // reflection based DI agent. that's completely optional.
         Injector di = new Injector()
-            .AddDependency(new Service1())
-            .AddDependency(new Service2());
+            .Add(new Service1())
+            .Add(new Service2());
         
         _mainPipeline = new MulticastSystem()
-            // add systems. order matters.
+            // declare systems. order matters.
             .Add(new System1())
             .Add(new System2())
             // inject dependencies (optional step)
             .ForEach(di.InjectInto);
+            
+        // if one want to invoke some system list on startup, shutdown, FixedUpdate or 
+        // some another specific events - additional pipelines could be configured the same way as above.
     }
     
     void Update()
@@ -102,7 +105,7 @@ public class System1 : ISystem
 
 Components should be plain C# structs:
 ```c#
-public struct Component1 {
+public struct Comp1 {
     public int value;
 }
 ```
@@ -154,13 +157,13 @@ foreach (Entity<Comp1> entity in storage.Query<Comp1>()) {
 
 // entities that have both components (like SQL INNER JOIN)
 foreach (Entity<Comp1, Comp2> entity in storage.Query<Comp1, Comp2>()) {
-    // copy value from Comp1 to Comp2
+    // Comp1 and Comp2 components could be accessed using positional getters:
     entity.Get2().value = entity.Get1().value * 2;
 }
 
 
-// skip entities that has Comp3 component. note that this feature is discouraged in well-designed programs.
-// it exist as a hack for quick fixes and legacy programs maintaining.
+// skip entities that has Comp3 component. note ideally this feature is discouraged.
+// it exist as a hack for quick fixes and legacy maintainence.
 foreach (Entity<Comp1, Comp2> entity in storage.Query<Component, Comp2>().Excluding<Comp3>()) {
     entity.Add<Comp3>();// will never fail here
 }

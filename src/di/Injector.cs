@@ -7,10 +7,8 @@ namespace Kk.LeoQuery
     public class Injector
     {
         private readonly Dictionary<Type, object> _dependencies = new Dictionary<Type, object>();
-        
-        
 
-        public Injector AddDependency(object o, Type overridenType = null)
+        public Injector Add(object o, Type overridenType = null)
         {
             Type type = overridenType ?? o.GetType();
             if (_dependencies.ContainsKey(type))

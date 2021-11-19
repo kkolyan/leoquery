@@ -13,7 +13,7 @@ namespace leoquery.test
             _storage = new LeoLiteStorage();
             
             Injector di = new Injector()
-                .AddDependency(new Service1());
+                .Add(new Service1());
             
             _pipeline = new MulticastSystem()
                 .Add(new System1())
