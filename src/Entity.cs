@@ -39,6 +39,13 @@ namespace Kk.LeoQuery
             ops.Add(id, state);
             return new Entity<T>(ops, id);
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T Add<T>() where T : struct
+        {
+            ops.Add(id, (T) default);
+            return ref ops.Get<T>(id);
+        }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
@@ -92,6 +99,13 @@ namespace Kk.LeoQuery
         {
             ops.Add(id, state);
             return new Entity<T1, T>(ops, id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T Add<T>() where T : struct
+        {
+            ops.Add(id, (T) default);
+            return ref ops.Get<T>(id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -153,6 +167,13 @@ namespace Kk.LeoQuery
         {
             ops.Add(id, state);
             return new Entity<T2, T>(ops, id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref T Add<T>() where T : struct
+        {
+            ops.Add(id, (T) default);
+            return ref ops.Get<T>(id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
