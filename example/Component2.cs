@@ -1,4 +1,4 @@
-namespace leoquery.test
+namespace Kk.LeoQuery
 {
     public struct Component2
     {

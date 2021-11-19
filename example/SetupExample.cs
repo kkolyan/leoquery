@@ -1,9 +1,6 @@
-using Kk.LeoQuery;
-using UnityEngine;
-
-namespace leoquery.test
+namespace Kk.LeoQuery
 {
-    public class SetupExample : MonoBehaviour
+    public class SetupExample
     {
         private ISystem _pipeline;
         private IEntityStorage _storage;

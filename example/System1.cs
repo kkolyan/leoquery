@@ -1,6 +1,4 @@
-using Kk.LeoQuery;
-
-namespace leoquery.test
+namespace Kk.LeoQuery
 {
     public class System1 : ISystem
     {
