@@ -63,6 +63,14 @@ namespace Kk.LeoQuery
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Take<T>() where T : struct
+        {
+            T foo = ops.Get<T>(id);
+            ops.Del<T>(id);
+            return foo;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity<T> Add<T>(T state) where T : struct
         {
             ops.Add(id, state);
@@ -148,6 +156,14 @@ namespace Kk.LeoQuery
         public ref T Get<T>() where T : struct
         {
             return ref ops.Get<T>(id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Take<T>() where T : struct
+        {
+            T foo = ops.Get<T>(id);
+            ops.Del<T>(id);
+            return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -249,6 +265,14 @@ namespace Kk.LeoQuery
         public ref T Get<T>() where T : struct
         {
             return ref ops.Get<T>(id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public T Take<T>() where T : struct
+        {
+            T foo = ops.Get<T>(id);
+            ops.Del<T>(id);
+            return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
