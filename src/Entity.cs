@@ -38,6 +38,19 @@ namespace Kk.LeoQuery
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGet<T>(out Entity<T> slice) where T : struct
+        {
+            if (ops.Has<T>(id))
+            {
+                slice = new Entity<T>(ops, id);
+                return true;
+            }
+
+            slice = default;
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
             return ref ops.Get<T>(id);
@@ -116,6 +129,19 @@ namespace Kk.LeoQuery
         public bool Has<T>() where T : struct
         {
             return ops.Has<T>(id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGet<T>(out Entity<T> slice) where T : struct
+        {
+            if (ops.Has<T>(id))
+            {
+                slice = new Entity<T>(ops, id);
+                return true;
+            }
+
+            slice = default;
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -204,6 +230,19 @@ namespace Kk.LeoQuery
         public bool Has<T>() where T : struct
         {
             return ops.Has<T>(id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGet<T>(out Entity<T> slice) where T : struct
+        {
+            if (ops.Has<T>(id))
+            {
+                slice = new Entity<T>(ops, id);
+                return true;
+            }
+
+            slice = default;
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
