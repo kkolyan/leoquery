@@ -13,6 +13,15 @@ namespace Kk.LeoQuery
             this.ops = ops ?? throw new Exception("ops is null");
             this.id = id;
         }
+        
+        // debug
+
+        public object[] Components => ops.GetComponents(id);
+
+        public override string ToString()
+        {
+            return $"Entity({Utils.FieldsToStringByReflection(id.value)})";
+        }
 
         // common methods
 
@@ -66,13 +75,22 @@ namespace Kk.LeoQuery
             this.ops = ops ?? throw new Exception("ops is null");
             this.id = id;
         }
+        
+        // debug
+
+        public object[] Components => ops.GetComponents(id);
+
+        public override string ToString()
+        {
+            return $"Entity<{typeof(T1).Name}>({Utils.FieldsToStringByReflection(id.value)})";
+        }
+
+        // specialized methods
 
         public static implicit operator Entity(Entity<T1> entity)
         {
             return new Entity(entity.ops, entity.id);
         }
-        
-        // specialized methods
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
@@ -133,13 +151,22 @@ namespace Kk.LeoQuery
             this.ops = ops ?? throw new Exception("ops is null");
             this.id = id;
         }
+        
+        // debug
+
+        public object[] Components => ops.GetComponents(id);
+
+        public override string ToString()
+        {
+            return $"Entity<{typeof(T1).Name},{typeof(T2).Name}>({Utils.FieldsToStringByReflection(id.value)})";
+        }
+        
+        // specialized methods
 
         public static implicit operator Entity(Entity<T1, T2> entity)
         {
             return new Entity(entity.ops, entity.id);
         }
-        
-        // specialized methods
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()

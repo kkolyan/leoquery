@@ -11,5 +11,7 @@ namespace Kk.LeoQuery
         void Del<T>(SafeEntityId id) where T : struct;
 
         void Destroy(SafeEntityId id);
+
+        object[] GetComponents(SafeEntityId id);
     }
 }

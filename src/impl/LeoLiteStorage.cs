@@ -87,6 +87,13 @@ namespace Kk.LeoQuery
             world.DelEntity(Unpack(id));
         }
 
+        public object[] GetComponents(SafeEntityId id)
+        {
+            object[] result = null;
+            world.GetComponents(Unpack(id), ref result);
+            return result;
+        }
+
         private int Unpack(SafeEntityId id)
         {
             if (!id.value.Unpack(world, out var idx))
