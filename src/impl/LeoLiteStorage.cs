@@ -6,13 +6,8 @@ namespace Kk.LeoQuery
 {
     public class LeoLiteStorage : IEntityStorage, ISafeEntityOps
     {
-        internal EcsWorld world;
+        internal EcsWorld world = new EcsWorld();
         private Dictionary<Type, object> _filters = new Dictionary<Type, object>();
-
-        public void Init()
-        {
-            world = new EcsWorld();
-        }
 
         public IEntitySet<T> Query<T>()
             where T : struct
@@ -61,14 +56,10 @@ namespace Kk.LeoQuery
 
         public Entity NewEntity()
         {
-            return new Entity
-            {
-                id = new SafeEntityId
+            return new Entity(this, new SafeEntityId
                 {
                     value = world.PackEntity(world.NewEntity())
-                },
-                ops = this
-            };
+                });
         }
 
         public ref T Get<T>(SafeEntityId id) where T : struct

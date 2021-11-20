@@ -6,11 +6,13 @@ namespace Kk.LeoQuery
     public struct EntityEnumerator<T> 
         where T : struct
     {
+        private ISafeEntityOps _ops;
         private EcsFilter _filter;
         private EcsFilter.Enumerator _enumerator;
 
-        public EntityEnumerator(EcsFilter filter) : this()
+        internal EntityEnumerator(ISafeEntityOps ops, EcsFilter filter) : this()
         {
+            _ops = ops;
             _filter = filter;
             _enumerator = _filter.GetEnumerator();
         }
@@ -24,7 +26,8 @@ namespace Kk.LeoQuery
                     id = new SafeEntityId
                     {
                         value = _filter.GetWorld().PackEntity(_enumerator.Current)
-                    }
+                    },
+                    ops = _ops
                 };
         }
 
@@ -45,11 +48,13 @@ namespace Kk.LeoQuery
         where T1 : struct
         where T2 : struct
     {
+        private ISafeEntityOps _ops;
         private EcsFilter _filter;
         private EcsFilter.Enumerator _enumerator;
 
-        public EntityEnumerator(EcsFilter filter) : this()
+        internal EntityEnumerator(ISafeEntityOps ops, EcsFilter filter) : this()
         {
+            _ops = ops;
             _filter = filter;
             _enumerator = _filter.GetEnumerator();
         }
@@ -63,7 +68,8 @@ namespace Kk.LeoQuery
                     id = new SafeEntityId
                     {
                         value = _filter.GetWorld().PackEntity(_enumerator.Current)
-                    }
+                    },
+                    ops = _ops
                 };
         }
 

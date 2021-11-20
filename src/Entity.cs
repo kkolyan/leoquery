@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.CompilerServices;
 
 namespace Kk.LeoQuery
@@ -9,7 +10,7 @@ namespace Kk.LeoQuery
 
         internal Entity(ISafeEntityOps ops, SafeEntityId id)
         {
-            this.ops = ops;
+            this.ops = ops ?? throw new Exception("ops is null");
             this.id = id;
         }
 
@@ -62,7 +63,7 @@ namespace Kk.LeoQuery
 
         internal Entity(ISafeEntityOps ops, SafeEntityId id)
         {
-            this.ops = ops;
+            this.ops = ops ?? throw new Exception("ops is null");
             this.id = id;
         }
 
@@ -129,7 +130,7 @@ namespace Kk.LeoQuery
 
         internal Entity(ISafeEntityOps ops, SafeEntityId id)
         {
-            this.ops = ops;
+            this.ops = ops ?? throw new Exception("ops is null");
             this.id = id;
         }
 

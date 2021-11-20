@@ -25,7 +25,7 @@ namespace Kk.LeoQuery
                 filter = _mask.End();
             }
 
-            return new EntityEnumerator<T>(filter);
+            return new EntityEnumerator<T>(_storage, filter);
         }
 
         public IEntitySet<T> Excluding<T0>() where T0 : struct
@@ -63,7 +63,7 @@ namespace Kk.LeoQuery
                 _filter = _mask.End();
             }
 
-            return new EntityEnumerator<T1, T2>(_filter);
+            return new EntityEnumerator<T1, T2>(_storage, _filter);
         }
 
         public IEntitySet<T1, T2> Excluding<T0>() where T0 : struct
