@@ -89,8 +89,9 @@ namespace Kk.LeoQuery
 
         public object[] GetComponents(SafeEntityId id)
         {
-            object[] result = null;
-            world.GetComponents(Unpack(id), ref result);
+            int entity = Unpack(id);
+            object[] result = new object[world.GetComponentsCount(entity)];
+            world.GetComponents(entity, ref result);
             return result;
         }
 
