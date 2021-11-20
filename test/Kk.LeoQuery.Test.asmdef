@@ -1,0 +1,17 @@
+{
+  "name": "Kk.LeoQuery.Test",
+  "includePlatforms": [
+    "Editor"
+  ],
+  "references": [
+    "Leopotam.EcsLite",
+    "Kk.LeoQuery",
+    "UnityEditor.TestRunner"
+  ],
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ]
+}

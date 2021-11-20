@@ -1,7 +1,0 @@
-{
-  "name": "Kk.LeoQuery.Example",
-  "references": [
-    "Leopotam.EcsLite",
-    "Kk.LeoQuery"
-  ]
-}

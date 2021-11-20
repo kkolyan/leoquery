@@ -26,6 +26,12 @@ namespace Kk.LeoQuery
         // common methods
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsAlive()
+        {
+            return ops.IsAlive(id);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
             return ops.Has<T>(id);
@@ -99,6 +105,12 @@ namespace Kk.LeoQuery
         }
 
         // common methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsAlive()
+        {
+            return ops.IsAlive(id);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
@@ -181,6 +193,12 @@ namespace Kk.LeoQuery
         }
 
         // common methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsAlive()
+        {
+            return ops.IsAlive(id);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct

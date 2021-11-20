@@ -100,6 +100,11 @@ namespace Kk.LeoQuery
             return result;
         }
 
+        public bool IsAlive(SafeEntityId id)
+        {
+            return id.value.Unpack(world, out int _);
+        }
+
         private int Unpack(SafeEntityId id)
         {
             if (!id.value.Unpack(world, out var idx))

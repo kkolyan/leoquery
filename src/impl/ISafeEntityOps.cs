@@ -12,6 +12,8 @@ namespace Kk.LeoQuery
 
         void Destroy(SafeEntityId id);
 
+        bool IsAlive(SafeEntityId id);
+
         object[] GetComponents(SafeEntityId id);
     }
 }
