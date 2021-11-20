@@ -1,9 +1,10 @@
+using System;
 using System.Runtime.CompilerServices;
 using Leopotam.EcsLite;
 
 namespace Kk.LeoQuery
 {
-    public struct EntityEnumerator<T> 
+    public struct EntityEnumerator<T> : IDisposable
         where T : struct
     {
         private ISafeEntityOps _ops;
@@ -43,8 +44,8 @@ namespace Kk.LeoQuery
             _enumerator.Dispose();
         }
     }
-    
-    public struct EntityEnumerator<T1, T2> 
+
+    public struct EntityEnumerator<T1, T2> : IDisposable
         where T1 : struct
         where T2 : struct
     {
