@@ -116,6 +116,12 @@ namespace Kk.LeoQuery
         {
             return ref ops.Get<T1>(id);
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Has1()
+        {
+            return ops.Has<T1>(id);
+        }
 
         // common methods
 
@@ -213,9 +219,21 @@ namespace Kk.LeoQuery
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Has1()
+        {
+            return ops.Has<T1>(id);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T2 Get2()
         {
             return ref ops.Get<T2>(id);
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Has2()
+        {
+            return ops.Has<T2>(id);
         }
 
         // common methods
