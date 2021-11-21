@@ -81,13 +81,59 @@ namespace Kk.LeoQuery
 
         public ref T Add<T>(SafeEntityId id) where T : struct
         {
-            ref T comp = ref world.GetPool<T>().Add(Unpack(id));
+            int entity = Unpack(id);
+            ref T comp = ref world.GetPool<T>().Add(entity);
             if (Init<T>.Instance != null)
             {
                 Init<T>.Instance.Init(ref comp);
             }
 
+            if (Group<T>.Manager != null)
+            {
+                Group<T>.Manager.add(world, entity);
+            }
+
             return ref comp;
+        }
+        
+        private class GroupManager : IComponentGroupBuilder
+        {
+            internal Action<EcsWorld,int> add;
+            internal Action<EcsWorld,int> delete;
+            
+            public void AddMember<T>() where T : struct
+            {
+                add += (world, entity) =>
+                {
+                    EcsPool<T> pool = world.GetPool<T>();
+                    if (!pool.Has(entity))
+                    {
+                        pool.Add(entity);
+                    }
+                };
+                delete += (world, entity) =>
+                {
+                    EcsPool<T> pool = world.GetPool<T>();
+                    if (pool.Has(entity))
+                    {
+                        pool.Del(entity);
+                    }
+                };
+            }
+        }
+
+        private static class Group<T>
+        {
+            internal static readonly GroupManager Manager;
+
+            static Group()
+            {
+                if (Activator.CreateInstance<T>() is IComponentGroup g)
+                {
+                    Manager = new GroupManager();
+                    g.DescribeGroup(Manager);
+                }
+            }
         }
 
         private static class Init<T>
@@ -97,7 +143,13 @@ namespace Kk.LeoQuery
 
         public void Del<T>(SafeEntityId id) where T : struct
         {
-            world.GetPool<T>().Del(Unpack(id));
+            int entity = Unpack(id);
+            world.GetPool<T>().Del(entity);
+
+            if (Group<T>.Manager != null)
+            {
+                Group<T>.Manager.delete(world, entity);
+            }
         }
 
         public void Destroy(SafeEntityId id)
@@ -120,10 +172,17 @@ namespace Kk.LeoQuery
 
         private int Unpack(SafeEntityId id)
         {
+            return Unpack(world, id);
+        }
+
+        private static int Unpack(EcsWorld world, SafeEntityId id)
+        {
             if (!id.value.Unpack(world, out var idx))
             {
-                throw new Exception("state entity");
+                throw new Exception($"invalid entity: {id}");
             }
+            
+            
 
             return idx;
         }
