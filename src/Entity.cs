@@ -26,7 +26,7 @@ namespace Kk.LeoQuery
         // common methods
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsAlive()
+        public bool IsValidEntity()
         {
             return ops.IsAlive(id);
         }
@@ -133,7 +133,7 @@ namespace Kk.LeoQuery
         // common methods
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsAlive()
+        public bool IsValidEntity()
         {
             return ops.IsAlive(id);
         }
@@ -253,7 +253,7 @@ namespace Kk.LeoQuery
         // common methods
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool IsAlive()
+        public bool IsValidEntity()
         {
             return ops.IsAlive(id);
         }

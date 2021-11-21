@@ -118,7 +118,11 @@ namespace leoquery.test
 
             public void AutoReset(ref C2 c)
             {
-                c.list ??= new List<int>();
+                if (c.list == null)
+                {
+                    c.list = new List<int>();
+                }
+
                 c.list.Clear();
             }
         }
