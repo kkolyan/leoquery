@@ -83,82 +83,15 @@ namespace Kk.LeoQuery
         public ref T Add<T>(SafeEntityId id) where T : struct
         {
             int entity = Unpack(id);
-            ref T comp = ref AddInternal(world.GetPool<T>(), entity);
-
-            if (Group<T>.Manager != null)
-            {
-                Group<T>.Manager.add(world, entity);
-            }
+            ref T comp = ref AddInternal(world.GetPool<T>(), entity, world);
 
             return ref comp;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ref T AddInternal<T>(EcsPool<T> pool, int entity) where T : struct
-        {
-            ref T comp = ref pool.Add(entity);
-            if (Init<T>.Instance != null)
-            {
-                Init<T>.Instance.Init(ref comp);
-            }
-
-            return ref comp;
-        }
-
-        private class GroupManager : IComponentGroupBuilder
-        {
-            internal Action<EcsWorld,int> add;
-            internal Action<EcsWorld,int> delete;
-            
-            public void AddMember<T>() where T : struct
-            {
-                add += (world, entity) =>
-                {
-                    EcsPool<T> pool = world.GetPool<T>();
-                    if (!pool.Has(entity))
-                    {
-                        AddInternal(pool, entity);
-                    }
-                };
-                delete += (world, entity) =>
-                {
-                    EcsPool<T> pool = world.GetPool<T>();
-                    if (pool.Has(entity))
-                    {
-                        pool.Del(entity);
-                    }
-                };
-            }
-        }
-
-        private static class Group<T>
-        {
-            internal static readonly GroupManager Manager;
-
-            static Group()
-            {
-                if (Activator.CreateInstance<T>() is IComponentGroup g)
-                {
-                    Manager = new GroupManager();
-                    g.DescribeGroup(Manager);
-                }
-            }
-        }
-
-        private static class Init<T>
-        {
-            internal static readonly IComponentInit<T> Instance = Activator.CreateInstance<T>() as IComponentInit<T>;
         }
 
         public void Del<T>(SafeEntityId id) where T : struct
         {
             int entity = Unpack(id);
-            world.GetPool<T>().Del(entity);
-
-            if (Group<T>.Manager != null)
-            {
-                Group<T>.Manager.delete(world, entity);
-            }
+            DeleteInternal(world.GetPool<T>(), entity, world);
         }
 
         public void Destroy(SafeEntityId id)
@@ -194,6 +127,82 @@ namespace Kk.LeoQuery
             
 
             return idx;
+        }
+        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ref T AddInternal<T>(EcsPool<T> pool, int entity, EcsWorld world) where T : struct
+        {
+            ref T comp = ref pool.Add(entity);
+            if (ComponentInit<T>.Instance != null)
+            {
+                ComponentInit<T>.Instance.Init(ref comp);
+            }
+
+            if (ComponentRelations<T>.Manager != null)
+            {
+                ComponentRelations<T>.Manager.add(world, entity);
+            }
+
+            return ref comp;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void DeleteInternal<T>(EcsPool<T> pool, int entity, EcsWorld world) where T : struct
+        {
+            pool.Del(entity);
+
+            if (ComponentRelations<T>.Manager != null)
+            {
+                ComponentRelations<T>.Manager.delete(world, entity);
+            }
+        }
+
+        private class RelationsManager : IRelationsBuilder
+        {
+            internal Action<EcsWorld,int> add;
+            internal Action<EcsWorld,int> delete;
+            
+            public void Satellite<T>() where T : struct
+            {
+                add += (world, entity) =>
+                {
+                    EcsPool<T> pool = world.GetPool<T>();
+                    if (!pool.Has(entity))
+                    {
+                        AddInternal(pool, entity, world);
+                    }
+                };
+                delete += (world, entity) =>
+                {
+                    EcsPool<T> pool = world.GetPool<T>();
+                    if (pool.Has(entity))
+                    {
+                        DeleteInternal(pool, entity, world);
+                    }
+                };
+            }
+        }
+
+        private static class ComponentRelations<T>
+        {
+            // intended
+            // ReSharper disable once StaticMemberInGenericType
+            internal static readonly RelationsManager Manager;
+
+            static ComponentRelations()
+            {
+                if (Activator.CreateInstance<T>() is IRelationsOwner g)
+                {
+                    Manager = new RelationsManager();
+                    g.DescribeRelations(Manager);
+                }
+            }
+        }
+
+        private static class ComponentInit<T>
+        {
+            internal static readonly IComponentInit<T> Instance = Activator.CreateInstance<T>() as IComponentInit<T>;
         }
     }
 }

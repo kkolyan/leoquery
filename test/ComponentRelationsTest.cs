@@ -4,7 +4,7 @@ using NUnit.Framework;
 namespace leoquery.test
 {
     [TestFixture]
-    public class ComponentGroupTest
+    public class ComponentRelationsTest
     {
         [Test]
         public void Adds()
@@ -66,12 +66,12 @@ namespace leoquery.test
             Assert.IsTrue(a.Has<C4>());
         }
 
-        public struct C1 : IComponentGroup
+        public struct C1 : IRelationsOwner
         {
-            public void DescribeGroup(IComponentGroupBuilder b)
+            public void DescribeRelations(IRelationsBuilder b)
             {
-                b.AddMember<C2>();
-                b.AddMember<C3>();
+                b.Satellite<C2>();
+                b.Satellite<C3>();
             }
         }
 
