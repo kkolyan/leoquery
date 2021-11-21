@@ -88,6 +88,16 @@ namespace Kk.LeoQuery
             return ref comp;
         }
 
+        public void Add<T>(SafeEntityId id, T initialState) where T : struct
+        {
+            if (ComponentInit<T>.Instance != null || ComponentAutoReset<T>.AutoReset)
+            {
+                throw new Exception($"passing initial state is disabled (as error prone) for components with either of {nameof(IEcsAutoReset<T>)} nor {nameof(IComponentInit<T>)}");
+            }
+
+            Add<T>(id) = initialState;
+        }
+
         public void Del<T>(SafeEntityId id) where T : struct
         {
             int entity = Unpack(id);
@@ -203,6 +213,11 @@ namespace Kk.LeoQuery
         private static class ComponentInit<T>
         {
             internal static readonly IComponentInit<T> Instance = Activator.CreateInstance<T>() as IComponentInit<T>;
+        }
+
+        private static class ComponentAutoReset<T> where T : struct
+        {
+            internal static readonly bool AutoReset = Activator.CreateInstance<T>() is IEcsAutoReset<T>;
         }
     }
 }
