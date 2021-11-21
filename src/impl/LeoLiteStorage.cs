@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Leopotam.EcsLite;
 
 namespace Kk.LeoQuery
@@ -82,11 +83,7 @@ namespace Kk.LeoQuery
         public ref T Add<T>(SafeEntityId id) where T : struct
         {
             int entity = Unpack(id);
-            ref T comp = ref world.GetPool<T>().Add(entity);
-            if (Init<T>.Instance != null)
-            {
-                Init<T>.Instance.Init(ref comp);
-            }
+            ref T comp = ref AddInternal(world.GetPool<T>(), entity);
 
             if (Group<T>.Manager != null)
             {
@@ -95,7 +92,19 @@ namespace Kk.LeoQuery
 
             return ref comp;
         }
-        
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ref T AddInternal<T>(EcsPool<T> pool, int entity) where T : struct
+        {
+            ref T comp = ref pool.Add(entity);
+            if (Init<T>.Instance != null)
+            {
+                Init<T>.Instance.Init(ref comp);
+            }
+
+            return ref comp;
+        }
+
         private class GroupManager : IComponentGroupBuilder
         {
             internal Action<EcsWorld,int> add;
@@ -108,7 +117,7 @@ namespace Kk.LeoQuery
                     EcsPool<T> pool = world.GetPool<T>();
                     if (!pool.Has(entity))
                     {
-                        pool.Add(entity);
+                        AddInternal(pool, entity);
                     }
                 };
                 delete += (world, entity) =>
