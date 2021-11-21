@@ -28,7 +28,7 @@ namespace Kk.LeoQuery
         }
 
         public IEntitySet<T1, T2> Query<T1, T2>()
-            where T1 : struct 
+            where T1 : struct
             where T2 : struct
         {
             Type type = typeof(IEntitySet<T1, T2>);
@@ -44,7 +44,7 @@ namespace Kk.LeoQuery
         public bool TrySingle<T>(out Entity<T> entity) where T : struct
         {
             EntitySet<T> entitySet = (EntitySet<T>)Query<T>();
-            
+
             foreach (Entity<T> candidate in entitySet)
             {
                 int entitiesCount = entitySet.filter.GetEntitiesCount();
@@ -52,9 +52,11 @@ namespace Kk.LeoQuery
                 {
                     throw new Exception($"cannot resolve unique {typeof(T).FullName}. count: {entitiesCount}");
                 }
+
                 entity = candidate;
                 return true;
             }
+
             entity = default;
             return false;
         }
@@ -62,9 +64,9 @@ namespace Kk.LeoQuery
         public Entity NewEntity()
         {
             return new Entity(this, new SafeEntityId
-                {
-                    value = world.PackEntity(world.NewEntity())
-                });
+            {
+                value = world.PackEntity(world.NewEntity())
+            });
         }
 
         public ref T Get<T>(SafeEntityId id) where T : struct
@@ -77,9 +79,20 @@ namespace Kk.LeoQuery
             return world.GetPool<T>().Has(Unpack(id));
         }
 
-        public void Add<T>(SafeEntityId id, T state) where T : struct
+        public ref T Add<T>(SafeEntityId id) where T : struct
         {
-            world.GetPool<T>().Add(Unpack(id)) = state;
+            ref T comp = ref world.GetPool<T>().Add(Unpack(id));
+            if (Init<T>.Instance != null)
+            {
+                Init<T>.Instance.Init(ref comp);
+            }
+
+            return ref comp;
+        }
+
+        private static class Init<T>
+        {
+            internal static readonly IComponentInit<T> Instance = Activator.CreateInstance<T>() as IComponentInit<T>;
         }
 
         public void Del<T>(SafeEntityId id) where T : struct

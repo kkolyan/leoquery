@@ -6,7 +6,7 @@ namespace Kk.LeoQuery
 
         bool Has<T>(SafeEntityId id) where T : struct;
 
-        void Add<T>(SafeEntityId id, T state) where T : struct;
+        ref T Add<T>(SafeEntityId id) where T : struct;
 
         void Del<T>(SafeEntityId id) where T : struct;
 

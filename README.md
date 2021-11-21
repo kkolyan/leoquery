@@ -117,19 +117,11 @@ public struct Comp1 {
 // create empty entity
 Entity a = storage.NewEntity();
 
-// add a component
-a.Add(new Comp1()); // fails if component of this type is already attached to entity.
-
-// note that there is no double-logic methods like "create-or-update" or "delete if present" here.
-// assumed that one can easily add them using "C# Extension Methods" if necessary.
-
-// create entity and initialize it in fluent way
-storage.NewEntity()
-    .Add(new Comp1())
-    .Add(new Comp2());
+// add a new component and initialize it. in DEBUG mode it throws exception if component already exists
+a.Add<Comp1>().value = 42;
     
-// modify component.
-a.Get<Comp1>().value = 42; // fails if there is no such component
+// modify component. in DEBUG mode it throws exception if component not found.
+a.Get<Comp1>().value = 17;
 
 // delete component
 a.Del<Comp1>(); // fails if there is no such component

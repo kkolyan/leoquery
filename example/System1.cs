@@ -15,10 +15,7 @@ namespace Kk.LeoQuery
                 else
                 {
                     storage.NewEntity()
-                        .Add(new Component2
-                        {
-                            value = entity.Get1().value * 2
-                        });
+                        .Add<Component2>().value = entity.Get1().value * 2;
                 }
 
                 if (entity.Has<Component3>())
