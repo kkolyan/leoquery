@@ -1,9 +1,11 @@
+using System.Collections.Generic;
+
 namespace Kk.LeoQuery
 {
     public interface IEntitySet<T>
         where T : struct
     {
-        EntityEnumerator<T> GetEnumerator();
+        IEnumerator<Entity<T>> GetEnumerator();
 
         IEntitySet<T> Excluding<TExc>() where TExc : struct;
     }
@@ -12,7 +14,7 @@ namespace Kk.LeoQuery
         where T1 : struct
         where T2 : struct
     {
-        EntityEnumerator<T1, T2> GetEnumerator();
+        IEnumerator<Entity<T1, T2>> GetEnumerator();
 
         IEntitySet<T1, T2> Excluding<TExc>() where TExc : struct;
     }

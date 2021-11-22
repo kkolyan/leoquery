@@ -18,14 +18,19 @@ namespace Kk.LeoQuery
         public IEntitySet<T> Query<T>()
             where T : struct
         {
+            return QueryInternal<T>();
+        }
+
+        private EntitySet<T, GenericVoid> QueryInternal<T>() where T : struct
+        {
             Type type = typeof(IEntitySet<T>);
             if (!_filters.TryGetValue(type, out object filterRaw))
             {
-                filterRaw = new EntitySet<T>(world.Filter<T>(), this);
+                filterRaw = new EntitySet<T, GenericVoid>(world.Filter<T>(), this);
                 _filters[type] = filterRaw;
             }
 
-            return (IEntitySet<T>)filterRaw;
+            return (EntitySet<T, GenericVoid>)filterRaw;
         }
 
         public IEntitySet<T1, T2> Query<T1, T2>()
@@ -44,11 +49,12 @@ namespace Kk.LeoQuery
 
         public bool TrySingle<T>(out Entity<T> entity) where T : struct
         {
-            EntitySet<T> entitySet = (EntitySet<T>)Query<T>();
+            EntitySet<T, GenericVoid> query = QueryInternal<T>();
 
-            foreach (Entity<T> candidate in entitySet)
+            foreach (Entity<T> candidate in (IEntitySet<T>)query)
             {
-                int entitiesCount = entitySet.filter.GetEntitiesCount();
+                // filter field is initialized on GetEnumerator
+                int entitiesCount = query.filter.GetEntitiesCount();
                 if (entitiesCount > 1)
                 {
                     throw new Exception($"cannot resolve unique {typeof(T).FullName}. count: {entitiesCount}");

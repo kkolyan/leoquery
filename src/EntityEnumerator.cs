@@ -1,28 +1,37 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Leopotam.EcsLite;
 
 namespace Kk.LeoQuery
 {
-    public struct EntityEnumerator<T> : IDisposable
-        where T : struct
+    public class EntityEnumerator<T1, T2> : IEnumerator<Entity<T1, T2>>, IEnumerator<Entity<T1>>
+        where T1 : struct
+        where T2 : struct
     {
         private ISafeEntityOps _ops;
         private EcsFilter _filter;
         private EcsFilter.Enumerator _enumerator;
+        private Action<EntityEnumerator<T1, T2>> _release;
 
-        internal EntityEnumerator(ISafeEntityOps ops, EcsFilter filter) : this()
+        internal EntityEnumerator(ISafeEntityOps ops, EcsFilter filter, Action<EntityEnumerator<T1, T2>> release)
         {
             _ops = ops;
             _filter = filter;
+            _release = release;
+        }
+
+        public void Reset()
+        {
             _enumerator = _filter.GetEnumerator();
         }
 
-        public Entity<T> Current
+        Entity<T1> IEnumerator<Entity<T1>>.Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get =>
-                new Entity<T>
+                new Entity<T1>
                 {
                     id = new SafeEntityId
                     {
@@ -32,35 +41,13 @@ namespace Kk.LeoQuery
                 };
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool MoveNext()
+        object IEnumerator.Current
         {
-            return _enumerator.MoveNext();
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => throw new NotSupportedException();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Dispose()
-        {
-            _enumerator.Dispose();
-        }
-    }
-
-    public struct EntityEnumerator<T1, T2> : IDisposable
-        where T1 : struct
-        where T2 : struct
-    {
-        private ISafeEntityOps _ops;
-        private EcsFilter _filter;
-        private EcsFilter.Enumerator _enumerator;
-
-        internal EntityEnumerator(ISafeEntityOps ops, EcsFilter filter) : this()
-        {
-            _ops = ops;
-            _filter = filter;
-            _enumerator = _filter.GetEnumerator();
-        }
-
-        public Entity<T1, T2> Current
+        Entity<T1, T2> IEnumerator<Entity<T1, T2>>.Current
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get =>
@@ -84,6 +71,7 @@ namespace Kk.LeoQuery
         public void Dispose()
         {
             _enumerator.Dispose();
+            _release(this);
         }
     }
 }
