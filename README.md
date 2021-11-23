@@ -13,7 +13,10 @@ Sugar facade for [LeoECS Lite](https://github.com/Leopotam/ecslite).
 
 ### CPU Overhead
 It copies structs more that LeoECS, so CPU load is higher. Though it may be improved for some amount 
-in future, some performance sacrifice is a conscious choice. 
+in future, some performance sacrifice is a conscious choice.
+
+### Filter mask is limited for 3 components
+That's just because I do not need more, but it could be easily added by reasonable demand.
 
 # Installation
 

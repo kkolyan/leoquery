@@ -5,16 +5,17 @@ using Leopotam.EcsLite;
 
 namespace Kk.LeoQuery
 {
-    public class EntityEnumerator<T1, T2> : IEnumerator<Entity<T1, T2>>, IEnumerator<Entity<T1>>
+    public class EntityEnumerator<T1, T2, T3> : IEnumerator<Entity<T1, T2, T3>>, IEnumerator<Entity<T1, T2>>, IEnumerator<Entity<T1>>
         where T1 : struct
         where T2 : struct
+        where T3 : struct
     {
         private World _world;
         private EcsFilter _filter;
         private EcsFilter.Enumerator _enumerator;
-        private Action<EntityEnumerator<T1, T2>> _release;
+        private Action<EntityEnumerator<T1, T2, T3>> _release;
 
-        internal EntityEnumerator(World world, EcsFilter filter, Action<EntityEnumerator<T1, T2>> release)
+        internal EntityEnumerator(World world, EcsFilter filter, Action<EntityEnumerator<T1, T2, T3>> release)
         {
             _world = world;
             _filter = filter;
@@ -34,6 +35,9 @@ namespace Kk.LeoQuery
 
         Entity<T1, T2> IEnumerator<Entity<T1, T2>>.Current =>
             new Entity<T1, T2>(_world, new SafeEntityId(_filter.GetWorld().PackEntity(_enumerator.Current)));
+
+        Entity<T1, T2, T3> IEnumerator<Entity<T1, T2, T3>>.Current =>
+            new Entity<T1, T2, T3>(_world, new SafeEntityId(_filter.GetWorld().PackEntity(_enumerator.Current)));
 
         bool IEnumerator.MoveNext()
         {

@@ -18,4 +18,14 @@ namespace Kk.LeoQuery
 
         IEntitySet<T1, T2> Excluding<TExc>() where TExc : struct;
     }
+
+    public interface IEntitySet<T1, T2, T3>
+        where T1 : struct
+        where T2 : struct
+        where T3 : struct
+    {
+        IEnumerator<Entity<T1, T2, T3>> GetEnumerator();
+
+        IEntitySet<T1, T2, T3> Excluding<TExc>() where TExc : struct;
+    }
 }

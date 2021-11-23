@@ -12,6 +12,11 @@ namespace Kk.LeoQuery
         IEntitySet<T1, T2> Query<T1, T2>(int worldIndex)
             where T1 : struct
             where T2 : struct;
+        
+        IEntitySet<T1, T2, T3> Query<T1, T2, T3>(int worldIndex)
+            where T1 : struct
+            where T2 : struct
+            where T3 : struct;
 
         bool TrySingle<T>(out Entity<T> entity) where T : struct;
         bool TrySingle<T>(int worldIndex, out Entity<T> entity) where T : struct;

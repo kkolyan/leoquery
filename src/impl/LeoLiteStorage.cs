@@ -38,36 +38,65 @@ namespace Kk.LeoQuery
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private EntitySet<T, GenericVoid> QueryInternal<T>(int liteWorldIndex) where T : struct
+        private EntitySet<T, GenericVoid, GenericVoid> QueryInternal<T>(int liteWorldIndex) where T : struct
         {
             Type type = typeof(IEntitySet<T>);
             if (!_filters.TryGetValue(type, out object filterRaw))
             {
                 World ops = _worlds[liteWorldIndex];
-                filterRaw = new EntitySet<T, GenericVoid>(ops.raw.Filter<T>(), ops);
+                filterRaw = new EntitySet<T, GenericVoid, GenericVoid>(ops.raw.Filter<T>(), ops);
                 _filters[type] = filterRaw;
             }
 
-            return (EntitySet<T, GenericVoid>)filterRaw;
+            return (EntitySet<T, GenericVoid, GenericVoid>)filterRaw;
         }
 
-        public IEntitySet<T1, T2> Query<T1, T2>() where T1 : struct where T2 : struct
+        public IEntitySet<T1, T2> Query<T1, T2>()
+            where T1 : struct
+            where T2 : struct
         {
             return Query<T1, T2>(0);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IEntitySet<T1, T2> Query<T1, T2>(int worldIndex) where T1 : struct where T2 : struct
+        public IEntitySet<T1, T2> Query<T1, T2>(int worldIndex) 
+            where T1 : struct 
+            where T2 : struct
         {
             Type type = typeof(IEntitySet<T1, T2>);
             if (!_filters.TryGetValue(type, out object filterRaw))
             {
                 World ops = _worlds[worldIndex];
-                filterRaw = new EntitySet<T1, T2>(ops.raw.Filter<T1>().Inc<T2>(), ops);
+                filterRaw = new EntitySet<T1, T2, GenericVoid>(ops.raw.Filter<T1>().Inc<T2>(), ops);
                 _filters[type] = filterRaw;
             }
 
             return (IEntitySet<T1, T2>)filterRaw;
+        }
+
+        public IEntitySet<T1, T2, T3> Query<T1, T2, T3>()
+            where T1 : struct
+            where T2 : struct 
+            where T3 : struct
+        {
+            return Query<T1, T2, T3>(0);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public IEntitySet<T1, T2, T3> Query<T1, T2, T3>(int worldIndex)
+            where T1 : struct
+            where T2 : struct
+            where T3 : struct
+        {
+            Type type = typeof(IEntitySet<T1, T2>);
+            if (!_filters.TryGetValue(type, out object filterRaw))
+            {
+                World ops = _worlds[worldIndex];
+                filterRaw = new EntitySet<T1, T2, T3>(ops.raw.Filter<T1>().Inc<T2>().Inc<T3>(), ops);
+                _filters[type] = filterRaw;
+            }
+
+            return (IEntitySet<T1, T2, T3>)filterRaw;
         }
 
         public bool TrySingle<T>(out Entity<T> entity) where T : struct
@@ -78,7 +107,7 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TrySingle<T>(int worldIndex, out Entity<T> entity) where T : struct
         {
-            EntitySet<T, GenericVoid> query = QueryInternal<T>(worldIndex);
+            EntitySet<T, GenericVoid, GenericVoid> query = QueryInternal<T>(worldIndex);
 
             foreach (Entity<T> candidate in (IEntitySet<T>)query)
             {
