@@ -1,22 +1,21 @@
-using System;
 using System.Runtime.CompilerServices;
 
 namespace Kk.LeoQuery
 {
-    public struct Entity
+    public readonly struct Entity
     {
-        internal ISafeEntityOps ops;
-        internal SafeEntityId id;
+        private readonly World world;
+        private readonly SafeEntityId id;
 
-        internal Entity(ISafeEntityOps ops, SafeEntityId id)
+        internal Entity(World world, SafeEntityId id)
         {
-            this.ops = ops ?? throw new Exception("ops is null");
+            this.world = world;
             this.id = id;
         }
         
         // debug
 
-        public object[] Components => ops.GetComponents(id);
+        public object[] Components => world.GetComponents(id);
 
         public override string ToString()
         {
@@ -28,21 +27,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return ops.IsAlive(id);
+            return world.IsAlive(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return ops.Has<T>(id);
+            return world.Has<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (ops.Has<T>(id))
+            if (world.Has<T>(id))
             {
-                slice = new Entity<T>(ops, id);
+                slice = new Entity<T>(world, id);
                 return true;
             }
 
@@ -53,58 +52,58 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref ops.Get<T>(id);
+            return ref world.Get<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            ops.Del<T>(id);
+            world.Del<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = ops.Get<T>(id);
-            ops.Del<T>(id);
+            T foo = world.Get<T>(id);
+            world.Del<T>(id);
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref ops.Add<T>(id);
+            return ref world.Add<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            ops.Add(id, state);
+            world.Add(id, state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            ops.Destroy(id);
+            world.Destroy(id);
         }
     }
 
-    public struct Entity<T1> 
+    public readonly struct Entity<T1> 
         where T1 : struct
     {
-        internal ISafeEntityOps ops;
-        internal SafeEntityId id;
+        private readonly World world;
+        internal readonly SafeEntityId id;
 
-        internal Entity(ISafeEntityOps ops, SafeEntityId id)
+        internal Entity(World world, SafeEntityId id)
         {
-            this.ops = ops ?? throw new Exception("ops is null");
+            this.world = world;
             this.id = id;
         }
         
         // debug
 
-        public object[] Components => ops.GetComponents(id);
+        public object[] Components => world.GetComponents(id);
 
         public override string ToString()
         {
@@ -115,19 +114,19 @@ namespace Kk.LeoQuery
 
         public static implicit operator Entity(Entity<T1> entity)
         {
-            return new Entity(entity.ops, entity.id);
+            return new Entity(entity.world, entity.id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
         {
-            return ref ops.Get<T1>(id);
+            return ref world.Get<T1>(id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has1()
         {
-            return ops.Has<T1>(id);
+            return world.Has<T1>(id);
         }
 
         // common methods
@@ -135,21 +134,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return ops.IsAlive(id);
+            return world.IsAlive(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return ops.Has<T>(id);
+            return world.Has<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (ops.Has<T>(id))
+            if (world.Has<T>(id))
             {
-                slice = new Entity<T>(ops, id);
+                slice = new Entity<T>(world, id);
                 return true;
             }
 
@@ -160,59 +159,59 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref ops.Get<T>(id);
+            return ref world.Get<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = ops.Get<T>(id);
-            ops.Del<T>(id);
+            T foo = world.Get<T>(id);
+            world.Del<T>(id);
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            ops.Del<T>(id);
+            world.Del<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref ops.Add<T>(id);
+            return ref world.Add<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            ops.Add(id, state);
+            world.Add(id, state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            ops.Destroy(id);
+            world.Destroy(id);
         }
     }
 
-    public struct Entity<T1, T2> 
+    public readonly struct Entity<T1, T2> 
         where T1 : struct
         where T2 : struct
     {
-        internal ISafeEntityOps ops;
-        internal SafeEntityId id;
+        private readonly World world;
+        internal readonly SafeEntityId id;
 
-        internal Entity(ISafeEntityOps ops, SafeEntityId id)
+        internal Entity(World world, SafeEntityId id)
         {
-            this.ops = ops ?? throw new Exception("ops is null");
+            this.world = world;
             this.id = id;
         }
         
         // debug
 
-        public object[] Components => ops.GetComponents(id);
+        public object[] Components => world.GetComponents(id);
 
         public override string ToString()
         {
@@ -223,31 +222,31 @@ namespace Kk.LeoQuery
 
         public static implicit operator Entity(Entity<T1, T2> entity)
         {
-            return new Entity(entity.ops, entity.id);
+            return new Entity(entity.world, entity.id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
         {
-            return ref ops.Get<T1>(id);
+            return ref world.Get<T1>(id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has1()
         {
-            return ops.Has<T1>(id);
+            return world.Has<T1>(id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T2 Get2()
         {
-            return ref ops.Get<T2>(id);
+            return ref world.Get<T2>(id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has2()
         {
-            return ops.Has<T2>(id);
+            return world.Has<T2>(id);
         }
 
         // common methods
@@ -255,21 +254,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return ops.IsAlive(id);
+            return world.IsAlive(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return ops.Has<T>(id);
+            return world.Has<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (ops.Has<T>(id))
+            if (world.Has<T>(id))
             {
-                slice = new Entity<T>(ops, id);
+                slice = new Entity<T>(world, id);
                 return true;
             }
 
@@ -280,40 +279,40 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref ops.Get<T>(id);
+            return ref world.Get<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = ops.Get<T>(id);
-            ops.Del<T>(id);
+            T foo = world.Get<T>(id);
+            world.Del<T>(id);
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            ops.Del<T>(id);
+            world.Del<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref ops.Add<T>(id);
+            return ref world.Add<T>(id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            ops.Add(id, state);
+            world.Add(id, state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            ops.Destroy(id);
+            world.Destroy(id);
         }
     }
 }

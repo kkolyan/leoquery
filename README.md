@@ -14,16 +14,6 @@ Sugar facade for [LeoECS Lite](https://github.com/Leopotam/ecslite).
 It copies structs more that LeoECS, so CPU load is higher. Though it may be improved for some amount 
 in future, some performance sacrifice is a conscious choice. 
 
-### Multi-worlds
-LeoECS Lite requires manual world-entity distruibution management to reach maximum performance, because 
-single-world approach may show performance degradation in projects with tons of single-component entities (aka "events").
-
-This library is intended to keep world-entity management under the hood with agile semi-automatic configuration or fully automatic.
-
-Current implementation doesn't bother about it at all, but future development is about two non-conflicting approaches:
-* Attribute-based hinting on component level (semi-automatic, because attributes should be placed by user)
-* Dynamic on-fly management (fully automatic)
-
 # Installation
 
 ## As unity module
@@ -159,5 +149,42 @@ foreach (Entity<Comp1, Comp2> entity in storage.Query<Comp1, Comp2>()) {
 foreach (Entity<Comp1, Comp2> entity in storage.Query<Component, Comp2>().Excluding<Comp3>()) {
     entity.Add<Comp3>();// will never fail here
 }
+```
 
+### Multi-world
+
+LeoECS Lite's architecture is polished for maximal for speed, but with naive entity allocation it may use memory a bit more than it necessary. 
+To mitigate this, multi-world concept is supposed to be used.
+
+The simplest approach is to use default world for long-living entities and extra world for short living ones. 
+To know more about multi-world concept, please visit LeoECS Lite documentation and community.
+
+Note that you still may use single-world approach and have good performance. Please use Profiler to make sure your optimization efforts are worthful.
+
+```c#
+// define a constants for world indices somewhere
+public class MyWorlds {
+    // that's not necessary, as all methods use 0 world index by default, but you can do so if you like.
+    public const int Default = 0;
+    
+    public const int Events = 1;
+}
+
+IEntityStorage storage = new LeoLiteStorage()
+    // that's not necessary, because 0-indexed world is defined anyway, but you can specify custom LeoECS Lite parameters that way.
+    .World(MyWorlds.Default, new EcsWorld.Config {})
+    // every extra world must be defined that way (with or without parameters)
+    .World(MyWorlds.Events);
+
+// by default 0-indexed world is accessed
+storage.NewEntity();
+
+// equivalent. if you like you may specify it.
+storage.NewEntity(MyWorlds.Default);
+
+// extra worlds must be specified explicitly
+storage.NewEntity(MyWorlds.Events);
+
+// the same for another storage methods. for example:
+storage.Query<Comp1>(MyWorlds.Events);
 ```

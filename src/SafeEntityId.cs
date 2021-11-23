@@ -4,9 +4,14 @@ using Leopotam.EcsLite;
 namespace Kk.LeoQuery
 {
     [Serializable]
-    public struct SafeEntityId
+    public readonly struct SafeEntityId
     {
-        public EcsPackedEntity value;
+        public readonly EcsPackedEntity value;
+
+        public SafeEntityId(EcsPackedEntity value)
+        {
+            this.value = value;
+        }
 
         public override string ToString()
         {

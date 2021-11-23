@@ -9,14 +9,14 @@ namespace Kk.LeoQuery
         where T2 : struct
     {
         private readonly EcsFilter.Mask _mask;
-        private readonly LeoLiteStorage _storage;
+        private readonly World _world;
         internal EcsFilter filter;
         private Dictionary<Type, object> _excFilters = new Dictionary<Type, object>();
         private Pool<EntityEnumerator<T1, T2>> _enumeratorPool;
 
-        public EntitySet(EcsFilter.Mask mask, LeoLiteStorage storage)
+        public EntitySet(EcsFilter.Mask mask, World world)
         {
-            _storage = storage;
+            _world = world;
             _mask = mask;
             _enumeratorPool = new Pool<EntityEnumerator<T1, T2>>(pool =>
             {
@@ -25,11 +25,11 @@ namespace Kk.LeoQuery
                     throw new Exception("enumerator leak detected");
                 }
 
-                return new EntityEnumerator<T1, T2>(_storage, filter, pool.Return);
+                return new EntityEnumerator<T1, T2>(_world, filter, pool.Return);
             });
         }
 
-        public EntityEnumerator<T1, T2> GetEnumerator()
+        private EntityEnumerator<T1, T2> GetEnumerator()
         {
             if (filter == null)
             {
@@ -57,10 +57,10 @@ namespace Kk.LeoQuery
             if (!_excFilters.TryGetValue(type, out var excFilter))
             {
                 excFilter = new EntitySet<T1, GenericVoid>(
-                    _storage.world
+                    _world.raw
                         .Filter<T1>()
                         .Exc<TExc>()
-                    , _storage
+                    , _world
                 );
                 _excFilters[type] = excFilter;
             }
@@ -74,11 +74,11 @@ namespace Kk.LeoQuery
             if (!_excFilters.TryGetValue(type, out var excFilter))
             {
                 excFilter = new EntitySet<T1, T2>(
-                    _storage.world
+                    _world.raw
                         .Filter<T1>()
                         .Inc<T2>()
                         .Exc<TExc>()
-                    , _storage
+                    , _world
                 );
                 _excFilters[type] = excFilter;
             }
