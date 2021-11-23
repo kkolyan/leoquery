@@ -7,10 +7,13 @@ namespace leoquery.test
     [TestFixture]
     public class ComponentAttrRelationsTest
     {
-        [SetUp]
-        public void Setup()
+        static ComponentAttrRelationsTest()
         {
-            RelationAttributes.RegisterRelationAttribute<TestRelation, TestRelationConfig>();
+            RelationAttributes.RegisterRelationAttribute<TestRelation>(b =>
+            {
+                b.Satellite<C2>();
+                b.Satellite<C3>();
+            });
         }
 
         [Test]
@@ -75,15 +78,6 @@ namespace leoquery.test
 
         public class TestRelation : Attribute { }
         
-        public class TestRelationConfig: IRelationsConfig
-        {
-            void IRelationsConfig.DescribeRelations(IRelationsBuilder b)
-            {
-                b.Satellite<C2>();
-                b.Satellite<C3>();
-            }
-        }
-
         [TestRelation]
         public struct C1
         {

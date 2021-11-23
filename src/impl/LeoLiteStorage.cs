@@ -210,18 +210,18 @@ namespace Kk.LeoQuery
             {
                 if (Activator.CreateInstance<T>() is IRelationsOwner g)
                 {
-                    Manager = ApplyRelationsConfig(g);
+                    Manager = ApplyRelationsConfig(g.DescribeRelations);
                 }
-                else if (RelationAttributes.TryGet(typeof(T), out IRelationsConfig c))
+                else if (RelationAttributes.TryGet(typeof(T), out DescribeRelations c))
                 {
                     Manager = ApplyRelationsConfig(c);
                 }
             }
 
-            private static RelationsManager ApplyRelationsConfig(IRelationsConfig g)
+            private static RelationsManager ApplyRelationsConfig(DescribeRelations g)
             {
                 RelationsManager relationsManager = new RelationsManager();
-                g.DescribeRelations(relationsManager);
+                g(relationsManager);
                 return relationsManager;
             }
         }

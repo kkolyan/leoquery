@@ -7,21 +7,20 @@ namespace Kk.LeoQuery
     public static class RelationAttributes
     {
 
-        private static Dictionary<Type, IRelationsConfig> _relationConfigByAttr = new Dictionary<Type, IRelationsConfig>();
+        private static Dictionary<Type, DescribeRelations> _relationConfigByAttr = new Dictionary<Type, DescribeRelations>();
         
-        public static void RegisterRelationAttribute<TAttr, TRelationConfig>()
+        public static void RegisterRelationAttribute<TAttr>(DescribeRelations relations)
             where TAttr : Attribute
-            where TRelationConfig : IRelationsConfig, new()
         {
             Type attrType = typeof(TAttr);
-            if (_relationConfigByAttr.TryGetValue(attrType, out IRelationsConfig existing) && existing.GetType() != typeof(TRelationConfig))
+            if (_relationConfigByAttr.ContainsKey(attrType))
             {
                 throw new Exception($"duplicate relation config for attribute {attrType.FullName}");
             }
-            _relationConfigByAttr[attrType] = new TRelationConfig();
+            _relationConfigByAttr[attrType] = relations;
         }
 
-        internal static bool TryGet(Type attributedType, out IRelationsConfig result)
+        internal static bool TryGet(Type attributedType, out DescribeRelations result)
         {
             foreach (Attribute attribute in attributedType.GetCustomAttributes())
             {
