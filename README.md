@@ -3,10 +3,11 @@
 Sugar facade for [LeoECS Lite](https://github.com/Leopotam/ecslite).
 
 ## Goals
-* Reduce boilerplate (particularly related to pools, worlds and filters)
+* Reduce boilerplate (primarily by avoiding init-time pool and filter definitions)
 * Introduce static typed filters (as in [LeoECS Classic](https://github.com/Leopotam/ecs))
 * Keep near-to-zero heap allocations
 * Keep design simple
+* Minimal dependencies (only LeoECS Lite)
 
 ## Known issues 
 
