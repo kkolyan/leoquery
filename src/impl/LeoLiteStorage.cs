@@ -15,8 +15,7 @@ namespace Kk.LeoQuery
             this.world = world ?? new EcsWorld();
         }
 
-        public IEntitySet<T> Query<T>()
-            where T : struct
+        IEntitySet<T> IEntityStorage.Query<T>()
         {
             return QueryInternal<T>();
         }
@@ -33,9 +32,7 @@ namespace Kk.LeoQuery
             return (EntitySet<T, GenericVoid>)filterRaw;
         }
 
-        public IEntitySet<T1, T2> Query<T1, T2>()
-            where T1 : struct
-            where T2 : struct
+        IEntitySet<T1, T2> IEntityStorage.Query<T1, T2>()
         {
             Type type = typeof(IEntitySet<T1, T2>);
             if (!_filters.TryGetValue(type, out object filterRaw))
@@ -47,7 +44,7 @@ namespace Kk.LeoQuery
             return (IEntitySet<T1, T2>)filterRaw;
         }
 
-        public bool TrySingle<T>(out Entity<T> entity) where T : struct
+        bool IEntityStorage.TrySingle<T>(out Entity<T> entity)
         {
             EntitySet<T, GenericVoid> query = QueryInternal<T>();
 
@@ -68,7 +65,7 @@ namespace Kk.LeoQuery
             return false;
         }
 
-        public Entity NewEntity()
+        Entity IEntityStorage.NewEntity()
         {
             return new Entity(this, new SafeEntityId
             {
@@ -76,17 +73,17 @@ namespace Kk.LeoQuery
             });
         }
 
-        public ref T Get<T>(SafeEntityId id) where T : struct
+        ref T ISafeEntityOps.Get<T>(SafeEntityId id)
         {
             return ref world.GetPool<T>().Get(Unpack(id));
         }
 
-        public bool Has<T>(SafeEntityId id) where T : struct
+        bool ISafeEntityOps.Has<T>(SafeEntityId id)
         {
             return world.GetPool<T>().Has(Unpack(id));
         }
 
-        public ref T Add<T>(SafeEntityId id) where T : struct
+        ref T ISafeEntityOps.Add<T>(SafeEntityId id)
         {
             int entity = Unpack(id);
             ref T comp = ref AddInternal(world.GetPool<T>(), entity, world);
@@ -94,28 +91,28 @@ namespace Kk.LeoQuery
             return ref comp;
         }
 
-        public void Add<T>(SafeEntityId id, T initialState) where T : struct
+        void ISafeEntityOps.Add<T>(SafeEntityId id, T initialState)
         {
             if (ComponentInit<T>.Instance != null || ComponentAutoReset<T>.AutoReset)
             {
                 throw new Exception($"passing initial state is disabled (as error prone) for components with either of {nameof(IEcsAutoReset<T>)} nor {nameof(IComponentInit<T>)}");
             }
 
-            Add<T>(id) = initialState;
+            ((ISafeEntityOps)this).Add<T>(id) = initialState;
         }
 
-        public void Del<T>(SafeEntityId id) where T : struct
+        void ISafeEntityOps.Del<T>(SafeEntityId id)
         {
             int entity = Unpack(id);
             DeleteInternal(world.GetPool<T>(), entity, world);
         }
 
-        public void Destroy(SafeEntityId id)
+        void ISafeEntityOps.Destroy(SafeEntityId id)
         {
             world.DelEntity(Unpack(id));
         }
 
-        public object[] GetComponents(SafeEntityId id)
+        object[] ISafeEntityOps.GetComponents(SafeEntityId id)
         {
             int entity = Unpack(id);
             object[] result = new object[world.GetComponentsCount(entity)];
@@ -123,7 +120,7 @@ namespace Kk.LeoQuery
             return result;
         }
 
-        public bool IsAlive(SafeEntityId id)
+        bool ISafeEntityOps.IsAlive(SafeEntityId id)
         {
             return id.value.Unpack(world, out int _);
         }

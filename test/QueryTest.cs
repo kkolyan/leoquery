@@ -11,7 +11,7 @@ namespace leoquery.test
         [Test]
         public void QuerySingle()
         {
-            LeoLiteStorage storage = new LeoLiteStorage();
+            IEntityStorage storage = new LeoLiteStorage();
             storage.NewEntity()
                 .Add<C1>().value = 42;
 
@@ -27,7 +27,7 @@ namespace leoquery.test
         [Test]
         public void QueryTwo()
         {
-            LeoLiteStorage storage = new LeoLiteStorage();
+            IEntityStorage storage = new LeoLiteStorage();
             storage.NewEntity()
                 .Add<C1>().value = 42;
             storage.NewEntity()
@@ -45,7 +45,7 @@ namespace leoquery.test
         [Test]
         public void QueryTwoTwice()
         {
-            LeoLiteStorage storage = new LeoLiteStorage();
+            IEntityStorage storage = new LeoLiteStorage();
             storage.NewEntity()
                 .Add<C1>().value = 42;
             storage.NewEntity()
