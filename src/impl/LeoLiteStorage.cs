@@ -204,15 +204,25 @@ namespace Kk.LeoQuery
         {
             // intended
             // ReSharper disable once StaticMemberInGenericType
-            internal static readonly RelationsManager Manager;
+            internal static RelationsManager Manager;
 
             static ComponentRelations()
             {
                 if (Activator.CreateInstance<T>() is IRelationsOwner g)
                 {
-                    Manager = new RelationsManager();
-                    g.DescribeRelations(Manager);
+                    Manager = ApplyRelationsConfig(g);
                 }
+                else if (RelationAttributes.TryGet(typeof(T), out IRelationsConfig c))
+                {
+                    Manager = ApplyRelationsConfig(c);
+                }
+            }
+
+            private static RelationsManager ApplyRelationsConfig(IRelationsConfig g)
+            {
+                RelationsManager relationsManager = new RelationsManager();
+                g.DescribeRelations(relationsManager);
+                return relationsManager;
             }
         }
 
