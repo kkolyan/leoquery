@@ -9,7 +9,7 @@ namespace leoquery.test
     {
         static ComponentAttrRelationsTest()
         {
-            RelationAttributes.RegisterRelationAttribute<TestRelation>(b =>
+            RelationAttributes.Register<TestRelation>(b =>
             {
                 b.Satellite<C2>();
                 b.Satellite<C3>();

@@ -9,7 +9,7 @@ namespace Kk.LeoQuery
 
         private static Dictionary<Type, DescribeRelations> _relationConfigByAttr = new Dictionary<Type, DescribeRelations>();
         
-        public static void RegisterRelationAttribute<TAttr>(DescribeRelations relations)
+        public static void Register<TAttr>(DescribeRelations relations)
             where TAttr : Attribute
         {
             Type attrType = typeof(TAttr);
