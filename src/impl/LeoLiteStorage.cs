@@ -9,11 +9,31 @@ namespace Kk.LeoQuery
     {
         private World[] _worlds;
         private Dictionary<Type, object> _filters = new Dictionary<Type, object>();
+        private List<int> _worldIndexes = new List<int>();
 
         public LeoLiteStorage(in EcsWorld.Config config = default, int initialWorldCount = 1)
         {
             _worlds = new World[initialWorldCount];
             World(0, config);
+        }
+
+        public int GetWorlds(ref EcsWorld[] results)
+        {
+            if (results == null)
+            {
+                results = new EcsWorld[_worldIndexes.Count];
+            }
+            else if (results.Length <= _worldIndexes.Count)
+            {
+                Array.Resize(ref results, _worldIndexes.Count);
+            }
+
+            for (var i = 0; i < _worldIndexes.Count; i++)
+            {
+                results[i] = _worlds[_worldIndexes[i]].raw;
+            }
+
+            return _worldIndexes.Count;
         }
 
         public LeoLiteStorage World(int index, in EcsWorld.Config config = default)
@@ -24,6 +44,11 @@ namespace Kk.LeoQuery
             }
 
             _worlds[index] = new World(new EcsWorld(config));
+            if (!_worldIndexes.Contains(index))
+            {
+                _worldIndexes.Add(index);
+            }
+
             return this;
         }
 
@@ -59,8 +84,8 @@ namespace Kk.LeoQuery
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public IEntitySet<T1, T2> Query<T1, T2>(int worldIndex) 
-            where T1 : struct 
+        public IEntitySet<T1, T2> Query<T1, T2>(int worldIndex)
+            where T1 : struct
             where T2 : struct
         {
             Type type = typeof(IEntitySet<T1, T2>);
@@ -76,7 +101,7 @@ namespace Kk.LeoQuery
 
         public IEntitySet<T1, T2, T3> Query<T1, T2, T3>()
             where T1 : struct
-            where T2 : struct 
+            where T2 : struct
             where T3 : struct
         {
             return Query<T1, T2, T3>(0);
