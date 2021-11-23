@@ -8,7 +8,6 @@ namespace Kk.LeoQuery
     public class LeoLiteStorage : IEntityStorage
     {
         private World[] _worlds;
-        private Dictionary<Type, object> _filters = new Dictionary<Type, object>();
         private List<int> _worldIndexes = new List<int>();
 
         public LeoLiteStorage(in EcsWorld.Config config = default, int initialWorldCount = 1)
@@ -65,12 +64,12 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private EntitySet<T, GenericVoid, GenericVoid> QueryInternal<T>(int liteWorldIndex) where T : struct
         {
+            World ops = _worlds[liteWorldIndex];
             Type type = typeof(IEntitySet<T>);
-            if (!_filters.TryGetValue(type, out object filterRaw))
+            if (!ops.filters.TryGetValue(type, out object filterRaw))
             {
-                World ops = _worlds[liteWorldIndex];
                 filterRaw = new EntitySet<T, GenericVoid, GenericVoid>(ops.raw.Filter<T>(), ops);
-                _filters[type] = filterRaw;
+                ops.filters[type] = filterRaw;
             }
 
             return (EntitySet<T, GenericVoid, GenericVoid>)filterRaw;
@@ -88,12 +87,12 @@ namespace Kk.LeoQuery
             where T1 : struct
             where T2 : struct
         {
+            World ops = _worlds[worldIndex];
             Type type = typeof(IEntitySet<T1, T2>);
-            if (!_filters.TryGetValue(type, out object filterRaw))
+            if (!ops.filters.TryGetValue(type, out object filterRaw))
             {
-                World ops = _worlds[worldIndex];
                 filterRaw = new EntitySet<T1, T2, GenericVoid>(ops.raw.Filter<T1>().Inc<T2>(), ops);
-                _filters[type] = filterRaw;
+                ops.filters[type] = filterRaw;
             }
 
             return (IEntitySet<T1, T2>)filterRaw;
@@ -113,12 +112,12 @@ namespace Kk.LeoQuery
             where T2 : struct
             where T3 : struct
         {
+            World ops = _worlds[worldIndex];
             Type type = typeof(IEntitySet<T1, T2>);
-            if (!_filters.TryGetValue(type, out object filterRaw))
+            if (!ops.filters.TryGetValue(type, out object filterRaw))
             {
-                World ops = _worlds[worldIndex];
                 filterRaw = new EntitySet<T1, T2, T3>(ops.raw.Filter<T1>().Inc<T2>().Inc<T3>(), ops);
-                _filters[type] = filterRaw;
+                ops.filters[type] = filterRaw;
             }
 
             return (IEntitySet<T1, T2, T3>)filterRaw;
