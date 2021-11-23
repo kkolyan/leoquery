@@ -33,9 +33,9 @@ namespace Kk.LeoQuery
 
         public void Add<T>(SafeEntityId id, T initialState) where T : struct
         {
-            if (ComponentInit<T>.Instance != null || ComponentAutoReset<T>.AutoReset)
+            if (ComponentAutoReset<T>.AutoReset)
             {
-                throw new Exception($"passing initial state is disabled (as error prone) for components with either of {nameof(IEcsAutoReset<T>)} nor {nameof(IComponentInit<T>)}");
+                throw new Exception($"passing initial state is disabled (as error prone) for components with {nameof(IEcsAutoReset<T>)}");
             }
 
             Add<T>(id) = initialState;
@@ -87,10 +87,6 @@ namespace Kk.LeoQuery
         private static ref T AddInternal<T>(EcsPool<T> pool, int entity, EcsWorld world) where T : struct
         {
             ref T comp = ref pool.Add(entity);
-            if (ComponentInit<T>.Instance != null)
-            {
-                ComponentInit<T>.Instance.Init(ref comp);
-            }
 
             if (ComponentRelations<T>.Manager != null)
             {
@@ -161,11 +157,6 @@ namespace Kk.LeoQuery
                 g(relationsManager);
                 return relationsManager;
             }
-        }
-
-        private static class ComponentInit<T>
-        {
-            internal static readonly IComponentInit<T> Instance = Activator.CreateInstance<T>() as IComponentInit<T>;
         }
 
         private static class ComponentAutoReset<T> where T : struct
