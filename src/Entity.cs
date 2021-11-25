@@ -23,6 +23,16 @@ namespace Kk.LeoQuery
             return $"Entity({Utils.FieldsToStringByReflection(id.value)})";
         }
 
+        public EcsPackedEntityWithWorld Unwrap()
+        {
+            if (!id.value.Unpack(world.raw, out var entity))
+            {
+                return default;
+            }
+
+            return world.raw.PackEntityWithWorld(entity);
+        }
+
         public static Entity Wrap(EcsPackedEntityWithWorld packed)
         {
             if (!packed.Unpack(out var world, out int entity))
