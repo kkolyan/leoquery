@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Leopotam.EcsLite;
 
 namespace Kk.LeoQuery
 {
@@ -20,6 +21,16 @@ namespace Kk.LeoQuery
         public override string ToString()
         {
             return $"Entity({Utils.FieldsToStringByReflection(id.value)})";
+        }
+
+        public static Entity Wrap(EcsPackedEntityWithWorld packed)
+        {
+            if (!packed.Unpack(out var world, out int entity))
+            {
+                return default;
+            }
+            // todo get rid of extra packing
+            return new Entity(new World(world), new SafeEntityId(world.PackEntity(entity)));
         }
 
         // common methods
