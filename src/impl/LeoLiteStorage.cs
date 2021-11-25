@@ -18,13 +18,9 @@ namespace Kk.LeoQuery
 
         public int GetWorlds(ref EcsWorld[] results)
         {
-            if (results == null)
+            if (results == null || results.Length < _worldIndexes.Count)
             {
                 results = new EcsWorld[_worldIndexes.Count];
-            }
-            else if (results.Length <= _worldIndexes.Count)
-            {
-                Array.Resize(ref results, _worldIndexes.Count);
             }
 
             for (var i = 0; i < _worldIndexes.Count; i++)
