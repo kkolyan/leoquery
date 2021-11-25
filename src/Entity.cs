@@ -5,42 +5,19 @@ namespace Kk.LeoQuery
 {
     public readonly struct Entity
     {
-        private readonly World world;
-        private readonly SafeEntityId id;
+        public readonly EcsPackedEntityWithWorld id;
 
-        internal Entity(World world, SafeEntityId id)
-        {
-            this.world = world;
+        public Entity(EcsPackedEntityWithWorld id) {
             this.id = id;
         }
-        
+
         // debug
 
-        public object[] Components => world.GetComponents(id);
+        public object[] Components => id.GetComponents();
 
         public override string ToString()
         {
-            return $"Entity({Utils.FieldsToStringByReflection(id.value)})";
-        }
-
-        public EcsPackedEntityWithWorld Unwrap()
-        {
-            if (!id.value.Unpack(world.raw, out var entity))
-            {
-                return default;
-            }
-
-            return world.raw.PackEntityWithWorld(entity);
-        }
-
-        public static Entity Wrap(EcsPackedEntityWithWorld packed)
-        {
-            if (!packed.Unpack(out var world, out int entity))
-            {
-                return default;
-            }
-            // todo get rid of extra packing
-            return new Entity(new World(world), new SafeEntityId(world.PackEntity(entity)));
+            return $"Entity({Utils.FieldsToStringByReflection(id)})";
         }
 
         // common methods
@@ -48,21 +25,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return world.IsAlive(id);
+            return id.IsAlive();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return world.Has<T>(id);
+            return id.Has<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (world.Has<T>(id))
+            if (id.Has<T>())
             {
-                slice = new Entity<T>(world, id);
+                slice = new Entity<T>();
                 return true;
             }
 
@@ -73,81 +50,78 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref world.Get<T>(id);
+            return ref id.Get<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            world.Del<T>(id);
+            id.Del<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = world.Get<T>(id);
-            world.Del<T>(id);
+            T foo = id.Get<T>();
+            id.Del<T>();
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref world.Add<T>(id);
+            return ref id.Add<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            world.Add(id, state);
+            id.Add(state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            world.Destroy(id);
+            id.Destroy();
         }
     }
 
     public readonly struct Entity<T1> 
         where T1 : struct
     {
-        private readonly World world;
-        internal readonly SafeEntityId id;
+        public readonly EcsPackedEntityWithWorld id;
 
-        internal Entity(World world, SafeEntityId id)
-        {
-            this.world = world;
+        public Entity(EcsPackedEntityWithWorld id) {
             this.id = id;
         }
         
         // debug
 
-        public object[] Components => world.GetComponents(id);
+        public object[] Components => id.GetComponents();
 
         public override string ToString()
         {
-            return $"Entity<{typeof(T1).Name}>({Utils.FieldsToStringByReflection(id.value)})";
+            return $"Entity<{typeof(T1).Name}>({Utils.FieldsToStringByReflection(id)})";
         }
 
         // specialized methods
 
         public static implicit operator Entity(Entity<T1> entity)
         {
-            return new Entity(entity.world, entity.id);
+            return new Entity(entity.id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
         {
-            return ref world.Get<T1>(id);
+            return ref id.Get<T1>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has1()
         {
-            return world.Has<T1>(id);
+            return id.Has<T1>();
         }
 
         // common methods
@@ -155,21 +129,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return world.IsAlive(id);
+            return id.IsAlive();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return world.Has<T>(id);
+            return id.Has<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (world.Has<T>(id))
+            if (id.Has<T>())
             {
-                slice = new Entity<T>(world, id);
+                slice = new Entity<T>();
                 return true;
             }
 
@@ -180,40 +154,40 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref world.Get<T>(id);
+            return ref id.Get<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = world.Get<T>(id);
-            world.Del<T>(id);
+            T foo = id.Get<T>();
+            id.Del<T>();
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            world.Del<T>(id);
+            id.Del<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref world.Add<T>(id);
+            return ref id.Add<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            world.Add(id, state);
+            id.Add(state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            world.Destroy(id);
+            id.Destroy();
         }
     }
 
@@ -221,53 +195,50 @@ namespace Kk.LeoQuery
         where T1 : struct
         where T2 : struct
     {
-        private readonly World world;
-        internal readonly SafeEntityId id;
+        public readonly EcsPackedEntityWithWorld id;
 
-        internal Entity(World world, SafeEntityId id)
-        {
-            this.world = world;
+        public Entity(EcsPackedEntityWithWorld id) {
             this.id = id;
         }
         
         // debug
 
-        public object[] Components => world.GetComponents(id);
+        public object[] Components => id.GetComponents();
 
         public override string ToString()
         {
-            return $"Entity<{typeof(T1).Name},{typeof(T2).Name}>({Utils.FieldsToStringByReflection(id.value)})";
+            return $"Entity<{typeof(T1).Name},{typeof(T2).Name}>({Utils.FieldsToStringByReflection(id)})";
         }
         
         // specialized methods
 
         public static implicit operator Entity(Entity<T1, T2> entity)
         {
-            return new Entity(entity.world, entity.id);
+            return new Entity(entity.id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
         {
-            return ref world.Get<T1>(id);
+            return ref id.Get<T1>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has1()
         {
-            return world.Has<T1>(id);
+            return id.Has<T1>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T2 Get2()
         {
-            return ref world.Get<T2>(id);
+            return ref id.Get<T2>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has2()
         {
-            return world.Has<T2>(id);
+            return id.Has<T2>();
         }
 
         // common methods
@@ -275,21 +246,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return world.IsAlive(id);
+            return id.IsAlive();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return world.Has<T>(id);
+            return id.Has<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (world.Has<T>(id))
+            if (id.Has<T>())
             {
-                slice = new Entity<T>(world, id);
+                slice = new Entity<T>(id);
                 return true;
             }
 
@@ -300,40 +271,40 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref world.Get<T>(id);
+            return ref id.Get<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = world.Get<T>(id);
-            world.Del<T>(id);
+            T foo = id.Get<T>();
+            id.Del<T>();
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            world.Del<T>(id);
+            id.Del<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref world.Add<T>(id);
+            return ref id.Add<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            world.Add(id, state);
+            id.Add(state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            world.Destroy(id);
+            id.Destroy();
         }
     }
 
@@ -342,65 +313,62 @@ namespace Kk.LeoQuery
         where T2 : struct
         where T3 : struct
     {
-        private readonly World world;
-        internal readonly SafeEntityId id;
+        public readonly EcsPackedEntityWithWorld id;
 
-        internal Entity(World world, SafeEntityId id)
-        {
-            this.world = world;
+        public Entity(EcsPackedEntityWithWorld id) {
             this.id = id;
         }
         
         // debug
 
-        public object[] Components => world.GetComponents(id);
+        public object[] Components => id.GetComponents();
 
         public override string ToString()
         {
-            return $"Entity<{typeof(T1).Name},{typeof(T2).Name},{typeof(T3).Name}>({Utils.FieldsToStringByReflection(id.value)})";
+            return $"Entity<{typeof(T1).Name},{typeof(T2).Name},{typeof(T3).Name}>({Utils.FieldsToStringByReflection(id)})";
         }
         
         // specialized methods
 
         public static implicit operator Entity(Entity<T1, T2, T3> entity)
         {
-            return new Entity(entity.world, entity.id);
+            return new Entity(entity.id);
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
         {
-            return ref world.Get<T1>(id);
+            return ref id.Get<T1>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has1()
         {
-            return world.Has<T1>(id);
+            return id.Has<T1>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T2 Get2()
         {
-            return ref world.Get<T2>(id);
+            return ref id.Get<T2>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has2()
         {
-            return world.Has<T2>(id);
+            return id.Has<T2>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T3 Get3()
         {
-            return ref world.Get<T3>(id);
+            return ref id.Get<T3>();
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has3()
         {
-            return world.Has<T3>(id);
+            return id.Has<T3>();
         }
 
         // common methods
@@ -408,21 +376,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return world.IsAlive(id);
+            return id.IsAlive();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return world.Has<T>(id);
+            return id.Has<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (world.Has<T>(id))
+            if (id.Has<T>())
             {
-                slice = new Entity<T>(world, id);
+                slice = new Entity<T>();
                 return true;
             }
 
@@ -433,40 +401,40 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref world.Get<T>(id);
+            return ref id.Get<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = world.Get<T>(id);
-            world.Del<T>(id);
+            T foo = id.Get<T>();
+            id.Del<T>();
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            world.Del<T>(id);
+            id.Del<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref world.Add<T>(id);
+            return ref id.Add<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            world.Add(id, state);
+            id.Add(state);
             return this;
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            world.Destroy(id);
+            id.Destroy();
         }
     }
 }

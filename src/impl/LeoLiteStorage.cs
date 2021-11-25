@@ -155,7 +155,7 @@ namespace Kk.LeoQuery
         public Entity NewEntity(int worldIndex)
         {
             World ops = _worlds[worldIndex];
-            return new Entity(ops, new SafeEntityId(ops.raw.PackEntity(ops.raw.NewEntity())));
+            return new Entity(ops.raw.PackEntityWithWorld(ops.raw.NewEntity()));
         }
     }
 }

@@ -31,13 +31,13 @@ namespace Kk.LeoQuery
             throw new NotSupportedException();
 
         Entity<T1> IEnumerator<Entity<T1>>.Current =>
-            new Entity<T1>(_world, new SafeEntityId(_filter.GetWorld().PackEntity(_enumerator.Current)));
+            new Entity<T1>(_filter.GetWorld().PackEntityWithWorld(_enumerator.Current));
 
         Entity<T1, T2> IEnumerator<Entity<T1, T2>>.Current =>
-            new Entity<T1, T2>(_world, new SafeEntityId(_filter.GetWorld().PackEntity(_enumerator.Current)));
+            new Entity<T1, T2>(_filter.GetWorld().PackEntityWithWorld(_enumerator.Current));
 
         Entity<T1, T2, T3> IEnumerator<Entity<T1, T2, T3>>.Current =>
-            new Entity<T1, T2, T3>(_world, new SafeEntityId(_filter.GetWorld().PackEntity(_enumerator.Current)));
+            new Entity<T1, T2, T3>(_filter.GetWorld().PackEntityWithWorld(_enumerator.Current));
 
         bool IEnumerator.MoveNext()
         {
