@@ -39,7 +39,7 @@ namespace Kk.LeoQuery
         {
             if (id.Has<T>())
             {
-                slice = new Entity<T>();
+                slice = new Entity<T>(id);
                 return true;
             }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Leopotam.EcsLite;
 
@@ -9,6 +10,9 @@ namespace Kk.LeoQuery
     {
         private World[] _worlds;
         private List<int> _worldIndexes = new List<int>();
+
+        // for debug watches
+        internal World[] Worlds => _worlds.ToArray();
 
         public LeoLiteStorage(in EcsWorld.Config config = default, int initialWorldCount = 1)
         {
