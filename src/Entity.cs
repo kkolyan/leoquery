@@ -123,6 +123,12 @@ namespace Kk.LeoQuery
         {
             return id.Has<T1>();
         }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Del1()
+        {
+            id.Del<T1>();
+        }
 
         // common methods
 
@@ -230,6 +236,12 @@ namespace Kk.LeoQuery
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Del1()
+        {
+            id.Del<T1>();
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T2 Get2()
         {
             return ref id.Get<T2>();
@@ -239,6 +251,12 @@ namespace Kk.LeoQuery
         public bool Has2()
         {
             return id.Has<T2>();
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Del2()
+        {
+            id.Del<T2>();
         }
 
         // common methods
@@ -348,6 +366,12 @@ namespace Kk.LeoQuery
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Del1()
+        {
+            id.Del<T1>();
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T2 Get2()
         {
             return ref id.Get<T2>();
@@ -360,6 +384,12 @@ namespace Kk.LeoQuery
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Del2()
+        {
+            id.Del<T2>();
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T3 Get3()
         {
             return ref id.Get<T3>();
@@ -369,6 +399,12 @@ namespace Kk.LeoQuery
         public bool Has3()
         {
             return id.Has<T3>();
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Del3()
+        {
+            id.Del<T3>();
         }
 
         // common methods
