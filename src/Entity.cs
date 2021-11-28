@@ -49,6 +49,37 @@ namespace Kk.LeoQuery
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGet<T1, T2>(out Entity<T1, T2> slice)
+            where T1 : struct
+            where T2 : struct
+        {
+            if (raw.Has<T1>() && raw.Has<T2>())
+            {
+                slice = new Entity<T1, T2>();
+                return true;
+            }
+
+            slice = default;
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool TryGet<T1, T2, T3>(out Entity<T1, T2, T3> slice)
+            where T1 : struct
+            where T2 : struct
+            where T3 : struct
+        {
+            if (raw.Has<T1>() && raw.Has<T2>() && raw.Has<T3>())
+            {
+                slice = new Entity<T1, T2, T3>();
+                return true;
+            }
+
+            slice = default;
+            return false;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
             return ref raw.Get<T>();
