@@ -3,25 +3,28 @@
 Sugar facade for [LeoECS Lite](https://github.com/Leopotam/ecslite).
 
 ## Goals
-* Reduce boilerplate (primarily by avoiding init-time pool and filter definitions)
+* Reduce boilerplate
 * Introduce static typed filters (as in [LeoECS Classic](https://github.com/Leopotam/ecs))
 * Keep near-to-zero heap allocations
-* Keep design simple
-* Minimal dependencies (only LeoECS Lite)
+* High level API, but opportunity to use low-level API (LeoECS Lite itself) in hot spots
+* Minimal dependencies (only LeoECS Lite) 
 
-## Known issues 
+## Examples
 
-### CPU Overhead
-It copies structs more that LeoECS, so CPU load is higher. Though it may be improved for some amount 
-in future, some performance sacrifice is a conscious choice.
+* Simple celestial body simulation demo (https://github.com/kkolyan/twisty-balls)
 
-### Filter mask is limited for 3 components
-That's just because I do not need more, but it could be easily added by reasonable demand.
+## Performance
+
+This library is sugar. In C# world sugar costs. Good thing is all overhead of this library is GC-allocation-free.
+
+In [example project](https://github.com/kkolyan/twisty-balls) (which is pretty CPU intensive), there is about 25% FPS penalty introduced by this library. 
+
+**Solution**: Use low-level API (LeoECS Lite functions) in the parts of your code that are not fast enough. Look into mentioned above example project how to do this.
 
 # Installation
 
 ## As unity module
-This repository can be installed as unity module directly from git url. In this way new line should be added to `Packages/manifest.json`:
+This repository can be installed as unity module directly from git url. In this way new lines should be added to `Packages/manifest.json`:
 ```c#
 "com.leopotam.ecslite": "https://github.com/Leopotam/ecslite.git",
 "com.nplekhanov.csx.leoquery": "https://github.com/kkolyan/leoquery.git",
@@ -32,7 +35,7 @@ If you can't / don't want to use unity modules, code can be cloned.
 
 # Usage
 
-Note that this short guide may miss information regarding corner cases. Please read LeoECS README if you need better understanding what happens under the hood..
+Note that this short guide may miss information regarding corner cases. Please read LeoECS Lite README if you need better understanding what happens under the hood.
 
 
 ## Systems
