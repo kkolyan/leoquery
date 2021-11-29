@@ -55,7 +55,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T1>() && raw.Has<T2>())
             {
-                slice = new Entity<T1, T2>();
+                slice = new Entity<T1, T2>(raw);
                 return true;
             }
 
@@ -71,7 +71,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T1>() && raw.Has<T2>() && raw.Has<T3>())
             {
-                slice = new Entity<T1, T2, T3>();
+                slice = new Entity<T1, T2, T3>(raw);
                 return true;
             }
 
@@ -122,45 +122,45 @@ namespace Kk.LeoQuery
     public readonly struct Entity<T1>
         where T1 : struct
     {
-        public readonly EcsPackedEntityWithWorld id;
+        public readonly EcsPackedEntityWithWorld raw;
 
-        public Entity(EcsPackedEntityWithWorld id)
+        public Entity(EcsPackedEntityWithWorld raw)
         {
-            this.id = id;
+            this.raw = raw;
         }
 
         // debug
 
-        public object[] Components => id.GetComponents();
+        public object[] Components => raw.GetComponents();
 
         public override string ToString()
         {
-            return $"Entity<{typeof(T1).Name}>({Utils.FieldsToStringByReflection(id)})";
+            return $"Entity<{typeof(T1).Name}>({Utils.FieldsToStringByReflection(raw)})";
         }
 
         // specialized methods
 
         public static implicit operator Entity(Entity<T1> entity)
         {
-            return new Entity(entity.id);
+            return new Entity(entity.raw);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T1 Get1()
         {
-            return ref id.Get<T1>();
+            return ref raw.Get<T1>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has1()
         {
-            return id.Has<T1>();
+            return raw.Has<T1>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del1()
         {
-            id.Del<T1>();
+            raw.Del<T1>();
         }
 
         // common methods
@@ -168,21 +168,21 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
         {
-            return id.IsAlive();
+            return raw.IsAlive();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Has<T>() where T : struct
         {
-            return id.Has<T>();
+            return raw.Has<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGet<T>(out Entity<T> slice) where T : struct
         {
-            if (id.Has<T>())
+            if (raw.Has<T>())
             {
-                slice = new Entity<T>();
+                slice = new Entity<T>(raw);
                 return true;
             }
 
@@ -195,9 +195,9 @@ namespace Kk.LeoQuery
             where T1 : struct
             where T2 : struct
         {
-            if (id.Has<T1>() && id.Has<T2>())
+            if (raw.Has<T1>() && raw.Has<T2>())
             {
-                slice = new Entity<T1, T2>();
+                slice = new Entity<T1, T2>(raw);
                 return true;
             }
 
@@ -211,9 +211,9 @@ namespace Kk.LeoQuery
             where T2 : struct
             where T3 : struct
         {
-            if (id.Has<T1>() && id.Has<T2>() && id.Has<T3>())
+            if (raw.Has<T1>() && raw.Has<T2>() && raw.Has<T3>())
             {
-                slice = new Entity<T1, T2, T3>();
+                slice = new Entity<T1, T2, T3>(raw);
                 return true;
             }
 
@@ -224,40 +224,40 @@ namespace Kk.LeoQuery
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Get<T>() where T : struct
         {
-            return ref id.Get<T>();
+            return ref raw.Get<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T Take<T>() where T : struct
         {
-            T foo = id.Get<T>();
-            id.Del<T>();
+            T foo = raw.Get<T>();
+            raw.Del<T>();
             return foo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Del<T>() where T : struct
         {
-            id.Del<T>();
+            raw.Del<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T Add<T>() where T : struct
         {
-            return ref id.Add<T>();
+            return ref raw.Add<T>();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Entity Add<T>(T state) where T : struct
         {
-            id.Add(state);
+            raw.Add(state);
             return this;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Destroy()
         {
-            id.Destroy();
+            raw.Destroy();
         }
     }
 
@@ -358,7 +358,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T1>() && raw.Has<T2>())
             {
-                slice = new Entity<T1, T2>();
+                slice = new Entity<T1, T2>(raw);
                 return true;
             }
 
@@ -374,7 +374,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T1>() && raw.Has<T2>() && raw.Has<T3>())
             {
-                slice = new Entity<T1, T2, T3>();
+                slice = new Entity<T1, T2, T3>(raw);
                 return true;
             }
 
@@ -523,7 +523,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T>())
             {
-                slice = new Entity<T>();
+                slice = new Entity<T>(raw);
                 return true;
             }
 
@@ -538,7 +538,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T1>() && raw.Has<T2>())
             {
-                slice = new Entity<T1, T2>();
+                slice = new Entity<T1, T2>(raw);
                 return true;
             }
 
@@ -554,7 +554,7 @@ namespace Kk.LeoQuery
         {
             if (raw.Has<T1>() && raw.Has<T2>() && raw.Has<T3>())
             {
-                slice = new Entity<T1, T2, T3>();
+                slice = new Entity<T1, T2, T3>(raw);
                 return true;
             }
 

@@ -22,7 +22,7 @@ namespace Kk.LeoQuery
 
         public void InjectInto(ISystem system)
         {
-            foreach (FieldInfo field in system.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (FieldInfo field in system.GetType().GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (field.GetCustomAttribute<Inject>() != null)
                 {
