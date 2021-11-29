@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Leopotam.EcsLite;
 
@@ -22,6 +23,18 @@ namespace Kk.LeoQuery
         }
 
         // common methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Entity a, Entity b)
+        {
+            return EqualityComparer<Entity>.Default.Equals(a, b);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Entity a, Entity b)
+        {
+            return !(a == b);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
@@ -164,6 +177,18 @@ namespace Kk.LeoQuery
         }
 
         // common methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Entity<T1> a, Entity b)
+        {
+            return EqualityComparer<Entity>.Default.Equals(a, b);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Entity<T1> a, Entity b)
+        {
+            return !(a == b);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
@@ -325,6 +350,18 @@ namespace Kk.LeoQuery
         }
 
         // common methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Entity<T1, T2> a, Entity b)
+        {
+            return EqualityComparer<Entity>.Default.Equals(a, b);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Entity<T1, T2> a, Entity b)
+        {
+            return !(a == b);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
@@ -505,6 +542,18 @@ namespace Kk.LeoQuery
         }
 
         // common methods
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator ==(Entity<T1, T2, T3> a, Entity b)
+        {
+            return EqualityComparer<Entity>.Default.Equals(a, b);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool operator !=(Entity<T1, T2, T3> a, Entity b)
+        {
+            return !(a == b);
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool IsValidEntity()
